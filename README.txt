@@ -12,8 +12,6 @@ Werkzeug==2.0.1
 ###Make sure you're on the root of the files
 ### Create and Activate a Virtual Environment if there isn't one already (there should be
 ###Go to backend folder and run this from there
-python -m venv venv
-
 
 Activate the virtual environment:
 
@@ -30,9 +28,14 @@ Activate the virtual environment:
 ### Install Required Packages
 
 Install all dependencies listed 
-
+##If necessary, it shouldn't be but in case
 pip install Flask Flask-SQLAlchemy Flask-CORS gunicorn flask-admin flask-login flask_sqlalchemy  Flask-Migrate
 
 ###Run
 
 python RegisterCode.py
+
+
+###from front end folder run
+npm install
+npm start
