@@ -18,12 +18,8 @@ function LeftSideBar(){
        console.log(e.target.value);
        setCurrNote(e.target.value);
 
-
    }
    return(<div>
-
-
-   
        <ul>
        {listNote.map((item) => {
            return (<li className="sidebar-item">{item.note}</li>)
@@ -32,13 +28,10 @@ function LeftSideBar(){
        {/* <li className="sidebar-item">How are you</li> */}
        </ul>
 
-
-
-
-   <>
-       <input type="text" onChange={inputChangeHandler}></input>
-       <button onClick={addcurrNote}>Add Note</button>
-   </>
+    <>
+        <input type="text" onChange={inputChangeHandler}></input>
+        <button onClick={addcurrNote}>Add Note</button>
+    </>
       
    </div>)
 
