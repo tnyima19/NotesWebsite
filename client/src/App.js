@@ -5,7 +5,10 @@ import SignUpPage from './pages/SignUpPage';
 import NotesViewPage from "./pages/NotesViewPage";
 
 
+
+
 import "./App.css";
+
 
 // function Navigation(props) {
 //   return (
@@ -31,23 +34,26 @@ import "./App.css";
 //   );
 // }
 
-function App() {
-  return (
-    <BrowserRouter>
-      {/* <Navigation /> */}
-      <div className="container-xl text-center">
-        <div className="row justify-content-center">
-          <Routes>
-            <Route path="/Login" element={<LoginPage />} />
-            <Route path="/Signup" element={<SignUpPage />} />
-            <Route path="" element={<NotesViewPage />} />
 
-            
-          </Routes>
-        </div>
-      </div>
-    </BrowserRouter>
-  );
+function App() {
+ return (
+   <BrowserRouter>
+     {/* <Navigation /> */}
+     <div className="container-xl text-center">
+       <div className="row justify-content-center">
+         <Routes>
+           <Route path="/Login" element={<LoginPage />} />
+           <Route path="/Signup" element={<SignUpPage />} />
+           <Route path="" element={<NotesViewPage />} />
+          
+         </Routes>
+       </div>
+     </div>
+   </BrowserRouter>
+ );
 }
 
+
 export default App;
+
+
