@@ -6,7 +6,7 @@ const NotesViewPage = () => {
 
  return (
    <div>
-       <h1>Notes website</h1>
+       <h1>NoteScape</h1>
        <div className='container-fluid'>
          <div className='row'>
          <div className='col-md-3'>
