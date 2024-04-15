@@ -1,29 +1,26 @@
 from flask import Flask, jsonify, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, current_user
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from flask_login import LoginManager, UserMixin, login_user, current_user
-from flask_migrate import Migrate
+import firebase_admin
+from firebase_admin import credentials, firestore
+import bcrypt
+
+# Initialize Firebase Admin
+cred = credentials.Certificate('./firebase/notescape-login-firebase-adminsdk-xnnk4-466ffeb27b.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(128))  # Storing password in plaintext
-
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    # Your user loading logic from Firestore
+    pass
 
 class MyModelView(ModelView):
     def is_accessible(self):
@@ -35,26 +32,28 @@ class MyModelView(ModelView):
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.json
-    if User.query.filter_by(username=data['username']).first():
-        return jsonify({'message': 'User already exists'}), 400
-    new_user = User(username=data['username'], email=data['email'], password=data['password'])
-    db.session.add(new_user)
-    db.session.commit()
+    users_ref = db.collection('users')
+    docs = users_ref.where('username', '==', data['username']).stream()
+    for doc in docs:
+        if doc.to_dict().get('username') == data['username']:
+            return jsonify({'message': 'User already exists'}), 400
+    
+    password_hash = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt())
+    user_data = {
+        'username': data['username'],
+        'email': data['email'],
+        'password': password_hash.decode('utf-8'),
+    }
+    users_ref.add(user_data)
     return jsonify({'message': 'User registered successfully'}), 201
 
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.json
-    user = User.query.filter_by(username=data['username']).first()
-    if user and user.password == data['password']:  # Compare passwords directly
-        login_user(user)
-        return jsonify({'message': 'Logged in successfully'}), 200
-    return jsonify({'message': 'Invalid username or password'}), 401
+    # Add user login logic here, if managing sessions through Flask
+    return jsonify({'message': 'Logged in successfully'}), 200
 
 admin = Admin(app, name='MyAdmin', template_mode='bootstrap3')
-admin.add_view(MyModelView(User, db.session))
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)
