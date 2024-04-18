@@ -13,6 +13,8 @@ link.rel = "stylesheet"; // Set the 'rel' attribute to 'stylesheet'
 link.href = "https://fonts.googleapis.com/css?family=Tangerine"; // Set the 'href' attribute to the Google Fonts URL
 document.head.appendChild(link); // Append the <link> element to the document head
 
+
+
 function Homepage() { // Define the Homepage component
 
     //This line initializes state for controlling the visibility of the navigation menu. 
