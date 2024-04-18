@@ -1,0 +1,244 @@
+#header {
+    font-family: 'Tangerine', serif;
+    font-weight: bold;
+    margin-top: 5px;
+    margin-left: 0px; /* Adjust margin-left to create space for the hamburger menu */
+    text-shadow: 4px 4px 3px #aaa;
+    font-size: 35px;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding:5px;
+    display: inline;
+    border-radius: 5px;
+}
+
+/* Hamburger menu image */
+#ham {
+    margin-top: 8px;
+    position: absolute;
+    left: 10px; /* Position the hamburger menu image to the left of the header */
+    cursor: pointer; /* Show pointer cursor when hovering over the image */
+    background-color: white;
+    border-radius: 2px;
+}
+
+/* Side navigation */
+.side-nav {
+    position: fixed;
+    top: 10;
+    left: -250px; /* Off-canvas position */
+    width: 250px;
+    height: 100%;
+    background-color: #f7d8f3;
+    transition: left 0.3s ease; /* Smooth transition for animation */
+    text-align: start;
+    
+}
+
+/* Show side navigation when 'showNav' is true */
+.side-nav.show {
+    left: 0;
+}
+
+/* Main content */
+.main-content {
+    transition: margin-left 0.3s ease; /* Smooth transition for animation */
+}
+
+/* Push main content to the right when side navigation is shown */
+.main-content.pushed {
+    margin-left: 250px; /* Adjust margin-left to match side navigation width */
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border-radius: 50%;
+    background-color: rgb(210, 215, 215);
+    font-size: 11px;
+}
+.navBar1{
+    margin-top: 18px;
+    list-style-type: none;
+    margin-left: -15px;
+}
+/* .navBar1 li::before{
+    content: "\003E";
+    color:#000;
+    padding:6px;
+} */
+.navBar2{
+    margin-top: 10px;
+}
+
+.create-btn-container{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.create-btn{
+    border-radius: 12px;
+    background-color: #c2ebfc;
+    border: 2px solid rgb(97, 95, 95);
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 15px;
+    margin-left: 3px;
+}
+
+.horizontal-list{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.horizontal-list li {
+    display: inline-block;
+    margin-right: 10px; /* Add some spacing between list items */
+  }
+
+.item{
+    margin-top: 25px;
+    padding: 5px;
+    border: 0px solid #ccc;
+    border-radius: 5px;
+    background-color: #f7f7f7;
+    cursor: pointer;
+    font-size: 20px;
+    font-family:'Times New Roman', Times, serif;
+}
+
+
+.subHeader{
+    margin: 20px;
+    background-color: white;
+    display: inline-block;
+    top: 50px;
+    border-radius: 5px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight:bold;
+    padding:5px;
+}
+/* for subnote editing */
+.subFolderList li{
+    list-style-type: circle;
+    list-style-position: inside;
+    background-color: white;
+    width: 100px;
+}
+
+
+.folder-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .folder-item:hover {
+    filter: brightness(80%);
+  }
+  
+  .folder-name {
+    margin-top: -17px; /* Adjust margin-top as needed */
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 19px;
+    font-weight:bold;
+    background-color: white;
+    padding:5px;
+    border-radius: 5px;
+  }
+
+  /* Homepage.css */
+
+.theme-options-dropdown {
+    position: absolute;
+    top: 50px; /* Adjust top position as needed */
+    right: 8px; /* Adjust right position as needed */
+    font-size: 12.5px;
+  }
+  
+  .theme-options-btn {
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    border-radius: 10px;
+    background-color: rgb(249, 192, 246);
+  }
+  
+  .theme-options-list {
+    /* Add styles for the dropdown list as needed */
+    background-color: white;
+    border-radius: 10px;
+    padding:15px;
+    margin-top: -1px;
+    border: 1px solid rgb(93, 92, 92);
+  }
+  
+  div[class="theme-option"]:hover{
+    padding:5px;
+    text-align: end;
+    cursor: pointer;
+  }
+
+  
+  /* .folder-menu{
+    color:white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: bold;
+  } */
+
+
+  .trash-menu {
+    position: absolute;
+    top: 90px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.folder-menu {
+    position: absolute;
+    top: 40px; /* Adjust as needed */
+    right: 5px;
+    background-color: rgb(192, 218, 255);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: 500;
+}
+
+.folder-menu button {
+    background-color: #f0f0f0; /* Grey color */
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-color 0.3s;
+}
+
+.folder-menu button:hover {
+    background-color: #ddd; /* Highlight on hover */
+}
+
+#trashButton {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 15px;
+    margin-top: 10px;
+}
+
+/* Align radio buttons and labels to the left */
+.folder-menu input[type="radio"] {
+    margin-right: 4px; /* Adjust as needed */
+}
+
+/* Align bullet points and labels */
+.folder-menu div {
+    display: flex;
+    align-items: center;
+    margin-left: -10px;
+    margin-top: 2px;
+}
