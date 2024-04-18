@@ -1,10 +1,11 @@
-#Cs499 Project
-This is the layout for the User Login and register aspect of the project, All assets/necessary files and code/and notes should be committed here.
+Tutorial to run this code.
 
-2/8/2024
+1. Go to backend folder (This is equivalent to the other API folders) and run venv\Scripts\Activate.
+2. Once inside the virtual environment of Venv, run python app.py
+3. Then go to frontend folder and run NPM I, NPM start. The code should launch the website.
 
-Currently, I have a rough draft of the login/register. It runs locally currently, before I commit it to our GitHub I'm going to have to put in the 
-necessary libraries that are required for it to work. I didn't have time to put it into a folder yet. I'll push it into the GitHub in 2/9 
-(afternoon) with the necessary files.
+Comment for Tenzing,
 
-Make sure to read the README.txt file too.
+There are a few places with the "backend" name is used for the pathing of the files so you might want to change it so that
+its pathing to API not "backend" when you do the merge. I believe it's like that for some react package.json config files too but I don't
+know for sure if that matters too much. Same thing for front end. For any questions just message me.
