@@ -10,12 +10,8 @@ const NotesViewPage = () => {
        <div className='container-fluid'>
          <div className='row'>
          <div className='col-md-3'>
-           <LeftSideBar />
+           {/* <LeftSideBar /> */}
          </div>
-      
-
-
-      
      <div className='col-md-9'>
        <Notes />
      </div>
