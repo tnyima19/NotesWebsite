@@ -1,8 +1,9 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import Notes from '../components/Notes';
 import LeftSideBar from '../components/LeftSideBar';
 const NotesViewPage = () => {
-
+  const {folderName, noteName}= useParams();
 
  return (
    <div>
@@ -13,7 +14,7 @@ const NotesViewPage = () => {
            {/* <LeftSideBar /> */}
          </div>
      <div className='col-md-9'>
-       <Notes />
+       <Notes folderName={folderName} noteName={noteName} />
      </div>
      </div>
      </div>

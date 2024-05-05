@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
+
 import axios from 'axios';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css'; // Include the Quill CSS
 
 // I want to send 
 const currentDate = new Date();
-const Notes = () => {
+const Notes = ({folderName, noteName}) => {
+  console.log('sugfoldernaem: ',noteName)
 
   const date = (currentDate.getMonth()+1).toString() + "/" + currentDate.getDate().toString()+"/"+ currentDate.getFullYear().toString();
   const editorRef = useRef(null); // Reference to the editor element
   const [content,setContent] = useState('');
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(noteName);
   
   useEffect(() => {
     if (editorRef.current && !editorRef.current.quill) {
@@ -60,6 +62,7 @@ const Notes = () => {
   };
   function handleSave(){
     const noteData = {
+      folderName,
       title: title,
       content: content
     }
@@ -73,7 +76,7 @@ const Notes = () => {
 
   }
 
-  const defaultTitle = `NewNote ${date}`;
+  const defaultTitle = `${noteName}`;
   return( 
   <div>
   <h1>Title name:</h1><input type="text" value={title || defaultTitle} onChange={handleTitleChange}></input> 
