@@ -44,8 +44,8 @@ function App() {
          <Routes>
            <Route path="/Login" element={<LoginPage />} />
            <Route path="/Signup" element={<SignUpPage />} />
-           <Route path="" element={<NotesViewPage />} />
-            <Route path="/home" element={<Homepage />} />          
+           <Route path="/:folderName/:noteName" element={<NotesViewPage />} />
+            <Route path="/" element={<Homepage />} />          
          </Routes>
        </div>
      </div>
