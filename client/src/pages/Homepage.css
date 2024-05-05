@@ -12,6 +12,10 @@
     display: inline;
     border-radius: 5px;
 }
+.container {
+    display: flex;
+    width: 100%;
+}
 
 /* Hamburger menu image */
 #ham {
@@ -24,18 +28,16 @@
 }
 
 /* Side navigation */
-.side-nav {
-    position: fixed;
-    top: 10;
-    left: -250px; /* Off-canvas position */
-    width: 250px;
-    height: 100%;
-    background-color: #f7d8f3;
-    transition: left 0.3s ease; /* Smooth transition for animation */
-    text-align: start;
-    
+.sidebar {
+    flex: 1;
+    border-right: 1px solid #ccc;
+    padding-right: 20px;
 }
 
+.sub-note-list {
+    list-style-type: none;
+    padding: 0;
+}
 /* Show side navigation when 'showNav' is true */
 .side-nav.show {
     left: 0;
@@ -43,13 +45,10 @@
 
 /* Main content */
 .main-content {
-    transition: margin-left 0.3s ease; /* Smooth transition for animation */
+    flex: 3;
+    padding-left: 20px;
 }
 
-/* Push main content to the right when side navigation is shown */
-.main-content.pushed {
-    margin-left: 250px; /* Adjust margin-left to match side navigation width */
-}
 
 .close-btn {
     position: absolute;
@@ -59,18 +58,13 @@
     background-color: rgb(210, 215, 215);
     font-size: 11px;
 }
-.navBar1{
-    margin-top: 18px;
+.navBar1 {
     list-style-type: none;
-    margin-left: -15px;
+    padding: 0;
 }
-/* .navBar1 li::before{
-    content: "\003E";
-    color:#000;
-    padding:6px;
-} */
-.navBar2{
-    margin-top: 10px;
+
+.navBar2 {
+    margin-bottom: 10px;
 }
 
 .create-btn-container{
