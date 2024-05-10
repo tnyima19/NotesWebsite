@@ -44,7 +44,7 @@ function App() {
          <Routes>
            <Route path="/Login" element={<LoginPage />} />
            <Route path="/Signup" element={<SignUpPage />} />
-           <Route path="/:folderName/:noteName" element={<NotesViewPage />} />
+           <Route path="/folders/:folderId/notes/:noteId" element={<NotesViewPage />} />
             <Route path="/" element={<Homepage />} />          
          </Routes>
        </div>

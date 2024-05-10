@@ -1,17 +1,15 @@
 import ExampleNotes from "./ExampleNotes";
 export const initialState = {
-    folders: ExampleNotes,
-    folder:{},
+    folders: [],
     currFolder:{},
-    currSubFolderName:'',
     show:false
   };
 export const reducer = (state,action) =>{
     switch(action.type){
-      case "SET_FOLDER":
-        return {...state, folder:action.payload};
+      case "SET_FOLDERS":
+        return {...state, folders: action.payload};
       case 'ADD_FOLDER':
-        return {...state, folders:[...state.folders, action.payload]};
+        return {...state, folders:[...state.folders, action.payload], currFolder: action.payload};
       case 'SET_CURR_FOLDER':
         return {...state, currFolder:action.payload};
       case 'SET_CURR_SUBFOLDER_NAME':
@@ -23,13 +21,13 @@ export const reducer = (state,action) =>{
         return {
           ...state,
           folders: state.folders.map(folder =>
-            folder.name === state.currFolder.name
-            ? {...folder, sub_notes: [...(folder.sub_notes || []), {name: action.payload}]}
+            folder._id === state.currFolder._id
+            ? {...folder, notes: [...folder.notes, action.payload]}
             : folder
           )
         };
       case 'UPDATE_CURR_FOLDER':
-        if (!state.currFolder || !state.currFolder.sub_note) {
+        if (!state.currFolder || !state.currFolder.notes) {
           console.error('Current folder or sub_note is undefined');
           return state;  // Return state unmodified if current folder or sub_note is undefined
         }
@@ -37,7 +35,7 @@ export const reducer = (state,action) =>{
             ...state,
             currFolder: {
               ...state.currFolder,
-              sub_notes: [...state.currFolder.sub_notes, {name: action.payload}]
+              notes: [...state.currFolder.notes, {name: action.payload}]
             }
         }
       case 'ADD_SUB_NOTE':
@@ -53,22 +51,19 @@ export const reducer = (state,action) =>{
           currFolder: updatedCurrFolder || state.currFolder, // ensure currFolder is updated or fallback to existing
         };
       case 'DELETE_FOLDER':
-        const uFolders = state.folders.filter(f => f.name !== action.payload.name);
-        const isCurrent = state.currFolder && state.currFolder.name === action.payload.name;
-        return {...state, folders: uFolders, currFolder: isCurrent ? {}: state.currFolder};
-      case 'DELETE_SUB_NOTE':
-        const updatedFolders = state.folders.map(folder =>{
-          if (folder.name === state.currFolder.name){
-            const filteredSubNotes = folder.sub_notes.filter(sub => sub !== action.payload);
-            return {...folder, sub_notes: filteredSubNotes};
-          }
-          return folder;
-        });
-        return {...state,
-           folders: updatedFolders,
-           currFolder:{...state.currFolder, sub_notes: state.currFolder.sub_notes.filter(sub => sub !== action.payload)
-          }};
-      //return {...state, sub_note: action.payload};
+        const uFolders = state.folders.filter(f => f._id !== action.payload._id);
+        //const isCurrent = state.currFolder && state.currFolder._id === action.payload._id;
+        return {...state, folders: uFolders, currFolder: state.currFolder._id === action.payload ? {}: state.currFolder};
+      case 'DELETE_NOTE':
+        const updatedNotes = state.currFolder.notes.filter(note => note._id !== action.payload);
+        const updatedCurrentFolder  = {...state.currFolder, notes: updatedNotes};
+
+        const updatedFolders =  state.folders.map(folder => folder._id === state.currFolder._id ? {...folder, notes: updatedNotes}: folder);
+
+        return{
+          ...state, 
+          currFolder:updatedCurrentFolder,
+          folders: updatedFolders};// {...state, sub_note: action.payload};
       default:
         return state;
       }
