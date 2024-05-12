@@ -1,37 +1,154 @@
-const express = require("express");
-const morgan = require("morgan");
-const path = require("path");
-const db = require("./models");
-const app = express();
-const PORT = process.env.PORT;
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
+import './Notes.css';
 
-// this lets us parse 'application/json' content in http requests
-app.use(express.json());
+const Notes = ({ folderId, noteId }) => {
+  const editorRef = useRef(null);
+  const [content, setContent] = useState('');
+  const [generatedImages, setGeneratedImages] = useState([]);
+  const [title, setTitle] = useState('');
+  const [searchPrompt, setSearchPrompt] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
 
-// add http request logging to help us debug and audit app use
-const logFormat = process.env.NODE_ENV === "production" ? "combined" : "dev";
-app.use(morgan(logFormat));
+  // Extract query parameters
+  const queryParams = new URLSearchParams(location.search);
+  const isNew = queryParams.get('isNew') === 'true';
+  const newTitle = queryParams.get('title');
 
-// this mounts controllers/index.js at the route `/api`
-app.use("/api", require("./controllers"));
+  useEffect(() => {
+    const fetchNote = async () => {
+      try {
+        const response = await axios.get(`http://localhost:4000/folders/${folderId}/notes/${noteId}`);
+        const noteData = response.data.note;
+        setTitle(noteData.title);
+        setContent(noteData.content);
 
-// for production use, we serve the static react build folder
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/build")));
+        // Load existing content into the Quill editor
+        if (editorRef.current && editorRef.current.quill) {
+          editorRef.current.quill.root.innerHTML = noteData.content;
+        }
+      } catch (error) {
+        console.error('Failed to fetch note:', error.response?.data?.message || 'Error occurred');
+      }
+    };
 
-  // all unknown routes should be handed to our react app
-  app.get("*", function (req, res) {
-    res.sendFile(path.join(__dirname, "../client/build", "index.html"));
-  });
-}
+    // If it's not a new note, fetch the note data
+    if (!isNew) fetchNote();
 
-// update DB tables based on model updates. Does not handle renaming tables/columns
-// NOTE: toggling this to true drops all tables (including data)
-db.sequelize.sync({ force: false });
+    // Initialize the Quill editor
+    if (editorRef.current && !editorRef.current.quill) {
+      const editor = new Quill(editorRef.current, {
+        theme: 'snow',
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, false] }],
+            ['bold', 'italic', 'underline'],
+            ['image', 'code-block']
+          ]
+        }
+      });
+      editorRef.current.quill = editor;
+      editor.on('text-change', () => setContent(editor.root.innerHTML));
 
-// start up the server
-if (PORT) {
-  app.listen(PORT, () => console.log(`Listening on ${PORT}`));
-} else {
-  console.log("===== ERROR ====\nCREATE A .env FILE!\n===== /ERROR ====");
-}
+      // If it's a new note, set the title to the provided value
+      if (isNew && newTitle) {
+        setTitle(newTitle);
+        editor.root.innerHTML = '';
+      }
+    }
+  }, [folderId, noteId, isNew, newTitle]);
+
+  const saveNote = async () => {
+    try {
+      if (isNew) {
+        // Create a new note
+        const response = await axios.post(`http://localhost:4000/folders/${folderId}/notes`, {
+          title,
+          content
+        });
+        console.log('New note created:', response.data);
+      } else {
+        // Update an existing note
+        const response = await axios.put(`http://localhost:4000/notes/${noteId}`, {
+          title,
+          content
+        });
+        console.log('Note updated:', response.data);
+      }
+    } catch (error) {
+      console.error('Error saving note:', error.response?.data?.message || 'Error occurred');
+    }
+  };
+
+  const saveAndReturnHome = () => {
+    saveNote();
+    navigate('/homepage');
+  };
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const fetchGeneratedImages = async () => {
+    try {
+      const response = await axios.get(`http://localhost:4000/get-images`);
+      setGeneratedImages(response.data.images || []);
+    } catch (error) {
+      console.error('Error fetching generated images:', error.response?.data?.message || 'Error occurred');
+    }
+  };
+
+  useEffect(() => {
+    fetchGeneratedImages();
+  }, []);
+
+  const handleGenerateImage = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await axios.post(`http://localhost:4000/generate-image`, { prompt: searchPrompt });
+      const newImageUrl = response.data.imageUrl;
+      setGeneratedImages((prev) => [newImageUrl, ...prev]);
+      setSearchPrompt(''); // Reset the prompt input after submission
+    } catch (error) {
+      console.error('Error generating image:', error.response?.data?.message || 'Error occurred');
+    }
+  };
+
+  return (
+    <div className='notes-container'>
+      <div className='editor-container'>
+        <h1>Note Title:</h1>
+        <input type="text" value={title} onChange={handleTitleChange} />
+        <div ref={editorRef} />
+        <button onClick={saveNote}>Save Changes</button>
+        <button onClick={saveAndReturnHome}>Return Home</button>
+      </div>
+      <div className="sidebar-container">
+        <h2>Generated Images</h2>
+        <form onSubmit={handleGenerateImage}>
+          <input
+            type="text"
+            value={searchPrompt}
+            onChange={(e) => setSearchPrompt(e.target.value)}
+            placeholder="Enter prompt for image"
+          />
+          <button type="submit">Generate</button>
+        </form>
+        {generatedImages.length === 0 ? (
+          <p>No images generated yet.</p>
+        ) : (
+          generatedImages.map((image, index) => (
+            <img key={index} src={image} alt={`Generated ${index}`} />
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Notes;

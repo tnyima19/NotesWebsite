@@ -1,0 +1,7 @@
+Flask
+flask_login
+firebase_admin
+google-cloud-firestore
+bcrypt
+flask_admin
+sqlalchemy
