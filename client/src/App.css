@@ -1,1 +1,101 @@
-/* Add custom CSS here */
+/* Global styles for the body and html elements */
+body, html {
+  font-family: 'Montserrat', sans-serif; /* Font style for the website */
+  margin: 0;  /* Removes default margin */
+  padding: 0; /* Removes default padding */
+  background-color: #f5f5dc; /* Background color for the entire website */
+  height: 100%; /* Sets the height of the body and html to fill the browser window */
+}
+
+/* Styles for the main .App container */
+.App {
+  text-align: center; /* Centers text horizontally */
+  width: 100%; /* Sets the width to fill the width of the browser window */
+}
+
+/* Styles for the header at the top of the page */
+.App-header {
+  background-color: white; /* Background color of the header */
+  padding: 20px 0; /* Padding above and below the header content */
+  width: 100%; /* Full width */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow effect for the header */
+  position: fixed; /* Makes the header stay at the top of the page even when scrolling */
+  top: 0; /* Position the header at the top of the page */
+  left: 0; /* Align the header to the left of the page */
+  z-index: 1000; /* Ensures the header stays above all other content */
+}
+
+/* Styles for the main heading inside the header */
+.App-header h1 {
+  color: #db7093; /* Color of the main heading */
+  margin: 0; /* Removes default margin */
+  font-size: 2.5rem; /* Size of the main heading */
+}
+
+/* Styles for the content that will be centered in the middle of the page */
+.App-content {
+  display: flex; /* Enables flexbox layout */
+  flex-direction: column; /* Stacks children vertically */
+  justify-content: center; /* Centers children vertically */
+  align-items: center; /* Centers children horizontally */
+  height: calc(100vh - 60px); /* Sets the height to fill the screen minus the height of the header */
+  padding-top: 60px; /* Space at the top to avoid overlap with the fixed header */
+  box-sizing: border-box; /* Ensures padding is included in the width/height calculations */
+}
+
+/* Styles for the form container */
+form {
+  background: #fff; /* Background color of the form */
+  padding: 20px; /* Padding inside the form */
+  border-radius: 8px; /* Rounded corners of the form */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Shadow effect for the form */
+  width: 300px; /* Width of the form */
+  margin: 0 auto; /* Centers the form horizontally */
+}
+
+/* Styles for the email and password inputs, and the login button */
+form input[type="email"],
+form input[type="password"],
+form button {
+  width: calc(100% - 20px); /* Width minus padding, to fit neatly inside the form */
+  padding: 10px; /* Padding inside the inputs/button */
+  margin-bottom: 10px; /* Space below each input/button */
+  border: 1px solid #ddd; /* Border color for inputs/button */
+  border-radius: 5px; /* Rounded corners for inputs/button */
+}
+
+/* Styles for the login button */
+form button {
+  background-color: #db7093; /* Background color for the button */
+  color: white; /* Text color for the button */
+  border: none; /* Removes default border */
+  border-radius: 5px; /* Rounded corners for the button */
+  cursor: pointer; /* Changes the cursor to a pointer when hovering over the button */
+}
+
+/* Hover state styles for the button */
+form button:hover {
+  background-color: #c5627f; /* Darker background color on hover */
+}
+
+/* Styles for the secondary heading within the form (e.g., "Login", "Register") */
+form h2 {
+  color: #db7093; /* Color of the secondary heading */
+  margin-bottom: 20px; /* Spacing between the title and the form inputs */
+}
+
+.links {
+  margin-top: 5px; /* Adds space above the links container */
+  /* Other styling for the container remains unchanged */
+}
+/* Styles for the links below the form (e.g., "Register", "Forgot Password?") */
+.links a {
+  text-decoration: none; /* Removes underline from links */
+  color: #db7093; /* Color of the links */
+  margin: 0 10px; /* Space on the sides of the links */
+}
+
+/* Hover state styles for the links */
+.links a:hover {
+  color: #c5627f; /* Darker color on hover */
+}
