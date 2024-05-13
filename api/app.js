@@ -9,16 +9,19 @@ app.use(cors(corsOptions));
 app.use(express.json());
 const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
-const axios = require('axios'); // Import axios for making API requests
-const DB = process.env.DATABASE.replace(
-  '<PASSWORD>',
-  process.env.DATABASE_PASSWORD
-);
+const admin = require('firebase-admin');
+const serviceAccount = require('./firebase/notescape-login-firebase-adminsdk-xnnk4-466ffeb27b.json'); // Ensure this path is correct
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
 
 mongoose.connect(DB).then(() => {
   console.log('DB connection successful');
 }).catch(err => {
-  console.log('DB connection error', err);
+  console.log('DB connection error:', err);
 });
 
 // Mongoose schemas
@@ -30,10 +33,11 @@ const noteSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Folder',
     required: true
-  }
+  },
+  userId: { type: String, required: true }
 });
 
-noteSchema.index({ title: 1, folderId: 1 }, { unique: true });
+noteSchema.index({ title: 1, folderId: 1, userId: 1 }, { unique: true });
 const Note = mongoose.model('Note', noteSchema);
 
 const folderSchema = new mongoose.Schema({
@@ -41,15 +45,39 @@ const folderSchema = new mongoose.Schema({
   notes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Note'
-  }]
+  }],
+  userId: { type: String, required: true }
 });
 
+folderSchema.index({ folderName: 1, userId: 1 }, { unique: true });
 const Folder = mongoose.model('Folder', folderSchema);
 
-// Routes for folders and notes
-app.get('/folders', async (req, res) => {
+// Middleware to check user authentication
+const checkAuth = async (req, res, next) => {
+  const idToken = req.headers.authorization;
+  if (!idToken) {
+    return res.status(403).send('Unauthorized');
+  }
   try {
-    const folders = await Folder.find().populate('notes');
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    req.userId = decodedToken.uid;
+    next();
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    res.status(403).send('Unauthorized');
+  }
+};
+
+// Routes
+app.use(checkAuth);
+
+app.get('/users/:userId/folders', async (req, res) => {
+  const { userId } = req.params;
+  if (userId !== req.userId) {
+    return res.status(403).send('Unauthorized');
+  }
+  try {
+    const folders = await Folder.find({ userId }).populate('notes');
     res.status(200).json(folders);
   } catch (err) {
     console.error('Error fetching folders:', err);
@@ -57,10 +85,13 @@ app.get('/folders', async (req, res) => {
   }
 });
 
-app.get('/folders/:folderId/notes/:noteId', async (req, res) => {
-  const { folderId, noteId } = req.params;
+app.get('/users/:userId/folders/:folderId/notes/:noteId', async (req, res) => {
+  const { userId, folderId, noteId } = req.params;
+  if (userId !== req.userId) {
+    return res.status(403).send('Unauthorized');
+  }
   try {
-    const note = await Note.findOne({ _id: noteId, folderId });
+    const note = await Note.findOne({ _id: noteId, folderId, userId });
     if (!note) {
       return res.status(404).send({ message: 'Note not found' });
     }
@@ -71,14 +102,17 @@ app.get('/folders/:folderId/notes/:noteId', async (req, res) => {
   }
 });
 
-app.delete('/folders/:folderId', async (req, res) => {
-  const { folderId } = req.params;
+app.delete('/users/:userId/folders/:folderId', async (req, res) => {
+  const { userId, folderId } = req.params;
+  if (userId !== req.userId) {
+    return res.status(403).send('Unauthorized');
+  }
   try {
-    const folder = await Folder.findById(folderId);
+    const folder = await Folder.findOne({ _id: folderId, userId });
     if (!folder) {
       return res.status(404).json({ message: 'Folder not found' });
     }
-    await Note.deleteMany({ folderId: folder._id });
+    await Note.deleteMany({ folderId: folder._id, userId });
     await Folder.findByIdAndDelete(folder._id);
     res.status(200).json({ message: 'Folder deleted successfully', folderId });
   } catch (error) {
@@ -87,10 +121,13 @@ app.delete('/folders/:folderId', async (req, res) => {
   }
 });
 
-app.delete('/folders/:folderId/notes/:noteId', async (req, res) => {
-  const { folderId, noteId } = req.params;
+app.delete('/users/:userId/folders/:folderId/notes/:noteId', async (req, res) => {
+  const { userId, folderId, noteId } = req.params;
+  if (userId !== req.userId) {
+    return res.status(403).send('Unauthorized');
+  }
   try {
-    const note = await Note.findOneAndDelete({ _id: noteId, folderId });
+    const note = await Note.findOneAndDelete({ _id: noteId, folderId, userId });
     if (!note) {
       return res.status(404).json({ message: 'Note not found or does not belong to the specified folder' });
     }
@@ -102,10 +139,13 @@ app.delete('/folders/:folderId/notes/:noteId', async (req, res) => {
   }
 });
 
-app.get('/folders/:folderId', async (req, res) => {
-  const { folderId } = req.params;
+app.get('/users/:userId/folders/:folderId', async (req, res) => {
+  const { userId, folderId } = req.params;
+  if (userId !== req.userId) {
+    return res.status(403).send('Unauthorized');
+  }
   try {
-    const folder = await Folder.findById(folderId).populate('notes');
+    const folder = await Folder.findOne({ _id: folderId, userId }).populate('notes');
     if (!folder) {
       return res.status(404).json({ message: 'Folder not found' });
     }
@@ -116,22 +156,50 @@ app.get('/folders/:folderId', async (req, res) => {
   }
 });
 
-app.post('/folders/:folderId/notes', async (req, res) => {
-  const { folderId } = req.params;
+app.post('/users/:userId/folders', async (req, res) => {
+  const { userId } = req.params;
+  if (userId !== req.userId) {
+    return res.status(403).send('Unauthorized');
+  }
+  const { folderName } = req.body;
+  try {
+    const existingFolder = await Folder.findOne({ folderName, userId });
+    if (existingFolder) {
+      return res.status(409).json({ message: 'Folder already exists' });
+    }
+    const newFolder = new Folder({
+      folderName,
+      userId,
+      notes: []
+    });
+    await newFolder.save();
+    res.status(201).json({ message: 'Folder created successfully', folder: newFolder });
+  } catch (err) {
+    console.error('Failed to create folder:', err);
+    res.status(500).json({ message: 'Failed to create folder', error: err.message });
+  }
+});
+
+app.post('/users/:userId/folders/:folderId/notes', async (req, res) => {
+  const { userId, folderId } = req.params;
+  if (userId !== req.userId) {
+    return res.status(403).send('Unauthorized');
+  }
   const { title, content } = req.body;
   try {
-    const folder = await Folder.findById(folderId);
+    const folder = await Folder.findOne({ _id: folderId, userId });
     if (!folder) {
       return res.status(404).json({ message: 'Folder not found' });
     }
-    const existingNote = await Note.findOne({ title, folderId });
+    const existingNote = await Note.findOne({ title, folderId, userId });
     if (existingNote) {
       return res.status(409).json({ message: `A note with the title "${title}" already exists in this folder.` });
     }
     const note = new Note({
       title,
       content,
-      folderId
+      folderId,
+      userId
     });
     await note.save();
     folder.notes.push(note._id);
@@ -143,11 +211,14 @@ app.post('/folders/:folderId/notes', async (req, res) => {
   }
 });
 
-app.put('/notes/:noteId', async (req, res) => {
-  const { noteId } = req.params;
+app.put('/users/:userId/notes/:noteId', async (req, res) => {
+  const { userId, noteId } = req.params;
+  if (userId !== req.userId) {
+    return res.status(403).send('Unauthorized');
+  }
   const { title, content } = req.body;
   try {
-    const note = await Note.findByIdAndUpdate(noteId, { title, content }, { new: true });
+    const note = await Note.findOneAndUpdate({ _id: noteId, userId }, { title, content }, { new: true });
     if (!note) {
       return res.status(404).json({ message: 'Note not found' });
     }
@@ -158,30 +229,11 @@ app.put('/notes/:noteId', async (req, res) => {
   }
 });
 
-app.post('/create-folder', async (req, res) => {
-  const { folderName } = req.body;
-  try {
-    const existingFolder = await Folder.findOne({ folderName });
-    if (existingFolder) {
-      return res.status(409).json({ message: 'Folder already exists' });
-    }
-    const newFolder = new Folder({
-      folderName,
-      notes: []
-    });
-    await newFolder.save();
-    res.status(201).json({ message: 'Folder created successfully', folder: newFolder });
-  } catch (error) {
-    console.error('Failed to create folder:', error);
-    res.status(500).json({ message: 'Failed to create folder', error: error.message });
-  }
-});
-
 // Routes for image generation and fetching
 app.get('/get-images', async (req, res) => {
   try {
     // Replace with your logic to fetch images
-    const response = await axios.get('https://your-image-api.com/get-images');
+        const response = await axios.get('https://your-image-api.com/get-images');
     res.status(200).json({ images: response.data });
   } catch (error) {
     console.error('Error fetching images:', error);
@@ -205,3 +257,4 @@ const port = 4000;
 app.listen(port, () => {
   console.log(`App running on port ${port}`);
 });
+

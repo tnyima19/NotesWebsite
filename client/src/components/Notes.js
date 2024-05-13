@@ -1,13 +1,14 @@
-// Notes.js
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 import axios from 'axios';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import './Notes.css';
 
 const Notes = () => {
-  const { folderId, noteId } = useParams();
+  const { folderId, noteId, userId } = useParams();
+  const { currentUser } = useAuth();
   const editorRef = useRef(null);
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
@@ -16,7 +17,6 @@ const Notes = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Extract query parameters
   const queryParams = new URLSearchParams(location.search);
   const isNew = queryParams.get('isNew') === 'true';
 
@@ -24,7 +24,9 @@ const Notes = () => {
     const fetchNote = async () => {
       if (!isNew) {
         try {
-          const response = await axios.get(`http://localhost:4000/folders/${folderId}/notes/${noteId}`);
+          const response = await axios.get(`http://localhost:4000/users/${userId}/folders/${folderId}/notes/${noteId}`, {
+            headers: { Authorization: await currentUser.getIdToken() }
+          });
           const noteData = response.data.note;
           setTitle(noteData.title);
           setContent(noteData.content);
@@ -57,21 +59,25 @@ const Notes = () => {
       editorRef.current.quill = editor;
       editor.on('text-change', () => setContent(editor.root.innerHTML));
     }
-  }, [folderId, noteId, isNew]);
+  }, [folderId, noteId, isNew, userId, currentUser]);
 
   const saveNote = async () => {
     try {
       if (isNew) {
-        const response = await axios.post(`http://localhost:4000/folders/${folderId}/notes`, {
+        const response = await axios.post(`http://localhost:4000/users/${userId}/folders/${folderId}/notes`, {
           title,
           content
+        }, {
+          headers: { Authorization: await currentUser.getIdToken() }
         });
         console.log('New note created:', response.data);
-        navigate(`/folders/${folderId}/notes/${response.data.note._id}`);
+        navigate(`/users/${userId}/folders/${folderId}/notes/${response.data.note._id}`);
       } else {
-        const response = await axios.put(`http://localhost:4000/notes/${noteId}`, {
+        const response = await axios.put(`http://localhost:4000/users/${userId}/notes/${noteId}`, {
           title,
           content
+        }, {
+          headers: { Authorization: await currentUser.getIdToken() }
         });
         console.log('Note updated:', response.data);
       }
@@ -82,7 +88,7 @@ const Notes = () => {
 
   const saveAndReturnHome = () => {
     saveNote();
-    navigate('/homepage');
+    navigate(`/users/${userId}/homepage`);
   };
 
   const handleTitleChange = (e) => {
@@ -106,7 +112,7 @@ const Notes = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post(`http://localhost:4001/generate-image`, { prompt: searchPrompt });
+      const response = await axios.post(`http://localhost:4000/generate-image`, { prompt: searchPrompt });
       const newImageUrl = response.data.imageUrl;
       setGeneratedImages((prev) => [newImageUrl, ...prev]);
       setSearchPrompt('');

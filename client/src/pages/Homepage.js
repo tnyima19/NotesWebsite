@@ -1,19 +1,27 @@
-// Homepage.js
 import React, { useState, useEffect, useReducer } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import SubNoteModalPage from './SubNoteModalPage';
 import HomepageLeftBar from "../components/HomepageLeftBar";
 import TrashButton from "../components/TrashButton";
 import hamBurgerMenuImg from '../pages/hamburger-menu-5.png';
 import ThemeButton from "../components/ThemeButton";
-import '../pages/Homepage.css';
+import '../pages/Homepage1.css'; // Use Priya's updated CSS
+import folderIcon from '../components/folder-removebg-preview.png';
+import trashIcon from '../components/trash-icon.png';
 import { reducer, initialState } from '../reducer';
 import axios from 'axios';
 
+// Add Google Fonts link
+var link = document.createElement("link");
+link.rel = "stylesheet";
+link.href = "https://fonts.googleapis.com/css?family=Tangerine";
+document.head.appendChild(link);
+
 function Homepage() {
+  const { userId } = useParams();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, currentUser } = useAuth();
   const [state, dispatch] = useReducer(reducer, initialState);
   const [newFolderName, setNewFolderName] = useState('');
   const [subNoteName, setSubNoteName] = useState('');
@@ -21,42 +29,46 @@ function Homepage() {
   useEffect(() => {
     const fetchFolders = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/folders');
+        const response = await axios.get(`http://localhost:4000/users/${userId}/folders`, {
+          headers: { Authorization: await currentUser.getIdToken() }
+        });
         dispatch({ type: 'SET_FOLDERS', payload: response.data });
       } catch (error) {
         console.error('Error fetching folders: ', error);
       }
     };
     fetchFolders();
-  }, [dispatch]);
+  }, [dispatch, userId, currentUser]);
 
   async function createFolder(folderName) {
     try {
-      const response = await axios.post('http://localhost:4000/create-folder', { folderName });
+      const response = await axios.post(`http://localhost:4000/users/${userId}/folders`, { folderName }, {
+        headers: { Authorization: await currentUser.getIdToken() }
+      });
       console.log('Folder created: ', response.data);
       dispatch({ type: 'ADD_FOLDER', payload: response.data.folder });
     } catch (error) {
-      console.error('Error creating folder: ', error.response.data.message);
+      console.error('Error creating folder: ', error.response?.data?.message || error.message);
     }
   }
 
   async function createNoteForCurrentFolder(title) {
     const cfolder = state.currFolder;
-    console.log('hello i am here: ', cfolder._id);
-    console.log('title: ', title);
     if (!cfolder || !cfolder._id) {
       console.error('No current folder selected or it is missing an ID');
       return;
     }
 
     try {
-      const response = await axios.post(`http://localhost:4000/folders/${cfolder._id}/notes`, {
+      const response = await axios.post(`http://localhost:4000/users/${userId}/folders/${cfolder._id}/notes`, {
         title: title,
         content: ''  // Starting with empty content
+      }, {
+        headers: { Authorization: await currentUser.getIdToken() }
       });
       console.log('Note created:', response.data);
       const newNoteId = response.data.note._id;
-      navigate(`/folders/${cfolder._id}/notes/${newNoteId}`);
+      navigate(`/users/${userId}/folders/${cfolder._id}/notes/${newNoteId}`);
     } catch (error) {
       console.error('Error creating note:', error.response.data.message);
     }
@@ -64,7 +76,9 @@ function Homepage() {
 
   async function handleDeleteFolder(folderId) {
     try {
-      const response = await axios.delete(`http://localhost:4000/folders/${folderId}`);
+      const response = await axios.delete(`http://localhost:4000/users/${userId}/folders/${folderId}`, {
+        headers: { Authorization: await currentUser.getIdToken() }
+      });
       console.log('Folder deleted: ', response.data.message);
       dispatch({ type: 'DELETE_FOLDER', payload: folderId });
     } catch (error) {
@@ -77,7 +91,7 @@ function Homepage() {
     if (!folderId) {
       console.error('No folder currently selected');
     }
-    navigate(`/folders/${folderId}/notes/new?isNew=true`);
+    navigate(`/users/${userId}/folders/${folderId}/notes/new?isNew=true`);
   }
 
   useEffect(() => {
@@ -90,25 +104,24 @@ function Homepage() {
 
   function handleFolder(e) {
     setNewFolderName(e.target.value);
-    console.log(newFolderName);
   }
 
   async function noteHandler(folder) {
-    console.log("ButtonPressed, foldername: ", folder.folderName);
-    console.log('folder selected: ', folder.folderName);
     try {
-      const response = await axios.get(`http://localhost:4000/folders/${folder._id}`);
-      console.log('Fetched folder data with notes: ', response.data);
+      const response = await axios.get(`http://localhost:4000/users/${userId}/folders/${folder._id}`, {
+        headers: { Authorization: await currentUser.getIdToken() }
+      });
       dispatch({ type: 'SET_CURR_FOLDER', payload: response.data });
     } catch (error) {
-      console.error("error fetching folder details: ", error.response.data.message);
+      console.error("Error fetching folder details: ", error.response.data.message);
     }
   }
 
   async function handleDeleteNote(folderId, noteId) {
     try {
-      const response = await axios.delete(`http://localhost:4000/folders/${folderId}/notes/${noteId}`);
-      console.log('Note deleted:', response.data.message);
+      const response = await axios.delete(`http://localhost:4000/users/${userId}/folders/${folderId}/notes/${noteId}`, {
+        headers: { Authorization: await currentUser.getIdToken() }
+      });
       dispatch({ type: 'DELETE_NOTE', payload: noteId });
     } catch (error) {
       console.error('Error deleting note:', error.response?.data?.message || error.message);
@@ -123,7 +136,6 @@ function Homepage() {
     const folderId = state.currFolder._id;
     const noteId = note._id;
     if (folderId && noteId) {
-      console.log(`Deleting note: ${note.title}, id: ${note._id}`);
       handleDeleteNote(folderId, noteId);
     } else {
       console.error('Invalid folder or note ID.');
@@ -141,15 +153,15 @@ function Homepage() {
       console.error('Missing folder or note ID');
       return;
     }
-    navigate(`/folders/${folderId}/notes/${noteId}`);
+    navigate(`/users/${userId}/folders/${folderId}/notes/${noteId}`);
   }
 
   function handleSubNoteInputChange(updatedSubNoteName) {
     setSubNoteName(updatedSubNoteName);
   }
 
-  function handleSubNoteSave(inputSubNoteName) {
-    if (!inputSubNoteName.trim()) {
+  function handleSubNoteSave() {
+    if (!subNoteName.trim()) {
       alert('Sub-note name is required.');
       return;
     }
@@ -157,7 +169,7 @@ function Homepage() {
       alert('No current folder selected.');
       return;
     }
-    createNoteForCurrentFolder(inputSubNoteName);
+    createNoteForCurrentFolder(subNoteName);
     setSubNoteName('');
   }
 
@@ -181,21 +193,33 @@ function Homepage() {
 
   return (
     <div className="container">
+      <div>
+        <h1 id="header">NoteScape <span style={{ fontSize: '27px' }}>&nbsp; &#128221;</span></h1>
+      </div>
+
       <div className="sidebar">
-        <input type="text" onChange={handleFolder} placeholder="New Folder Name" />
-        <button onClick={newNoteHandler}>Create Folder</button>
+        <div className="folder">
+          <input type="text" onChange={handleFolder} placeholder="Enter name" />
+          <button className="create-folder" onClick={newNoteHandler}>Create Folder</button>
+        </div>
+
         <ul className='navBar1'>
           {state.folders && state.folders.map((folder, index) => (
             <li className='navBar2' key={index}>
-              <button onClick={() => noteHandler(folder)}>
-                {folder.folderName}
-              </button>
-              <button onClick={() => deleteFolder(folder)}>Delete Folder</button>
-              <button onClick={createNote}>Create New Note here</button>
+              <div className="folderFix">
+                <div className="folder-icon" onClick={() => noteHandler(folder)}>
+                  <img src={folderIcon} height="110" alt="folder" />
+                  <span className="folder-name"> {folder.folderName}</span>
+                </div>
+                <div className="delete-folder">
+                  <img className="delete-folder-button" src={trashIcon} alt="Delete" height="24" onClick={() => deleteFolder(folder)} title="Delete Folder"/>
+                </div>
+              </div>
+              <button id="create-note-folder" onClick={createNote}>Create a New Note</button>
             </li>
           ))}
         </ul>
-        <button onClick={handleLogout}>Logout</button>
+        <button id="logout-btn" onClick={handleLogout}>Logout</button>
       </div>
       <div className="main-content">
         {state.show && (
@@ -207,21 +231,24 @@ function Homepage() {
             handleSubNoteSave={handleSubNoteSave}
           />
         )}
-        <button onClick={openNewNote}>Create New Note</button>
+        <div className="general-note">
+          <button id="general-note-btn" onClick={openNewNote}>Create New Note</button>
+        </div>
         {state.currFolder && state.currFolder.notes && (
           <div>
-            <h3>Notes in {state.currFolder.folderName}:</h3>
+            <h3 id="header2">Notes in {state.currFolder.folderName}:</h3>
             <ul className='sub-note-list'>
               {state.currFolder.notes.map((note, index) => (
                 <li key={index}>
-                  <button onClick={() => openNote(note)}>Open '{note.title}'</button>
-                  <button onClick={() => deleteNoteFromFolder(note)}>Delete Note</button>
+                  <button id="open-btn" onClick={() => openNote(note)}>Open '{note.title}'</button>
+                  <button id="delete-btn" onClick={() => deleteNoteFromFolder(note)}>Delete Note</button>
                 </li>
               ))}
             </ul>
           </div>
         )}
       </div>
+      <ThemeButton />
     </div>
   );
 }

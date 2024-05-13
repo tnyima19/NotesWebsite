@@ -44,11 +44,12 @@ function SubNoteModalPage({show, handleClose,subNoteName, setSubNoteName, handle
           </Button>
         </Modal.Footer>
       </Modal> */}
-      <h1>SubNote name: </h1>
-      <input value={subNoteName}onChange={handleInputChange}></input>
-      <button variant="secondary" onClick={handleClose}>Close</button>
-      <button variant="primary" onClick={onSave}>Save Changes</button>
-      
+      <div className="subnote">
+        <h1>Insert Note Name: </h1>
+        <input value={subNoteName}onChange={handleInputChange}></input>
+        <button variant="secondary" onClick={handleClose}>Close</button>
+        <button variant="primary" onClick={onSave}>Save Changes</button>
+      </div>
     </dialog>)
 };
 
