@@ -3,6 +3,10 @@ Prerequisites
 
     Node.js installed
     Python installed
+<<<<<<< HEAD
+=======
+    Firebase Admin SDK credentials (JSON file)
+>>>>>>> 196077fb7fc8d7fc7a98abd4f918121cc95e330a
 
 macOS
 1. Node.js Backend (app.js)
@@ -179,4 +183,8 @@ For each operating system:
     Start the Python backend.
     Start the React frontend.
 
+<<<<<<< HEAD
 Ensure each backend and frontend is running in its respective terminal window. This setup ensures all parts of your application are running concurrently.
+=======
+Ensure each backend and frontend is running in its respective terminal window. This setup ensures all parts of your application are running concurrently.
+>>>>>>> 196077fb7fc8d7fc7a98abd4f918121cc95e330a
