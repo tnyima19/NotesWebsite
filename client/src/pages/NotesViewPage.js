@@ -1,16 +1,4 @@
-<<<<<<< HEAD
-import Notes from '../components/Notes';
 
-const NotesViewPage = () => {
-
-  return (
-    <div>
-      <Notes />
-    </div>
-  );
-};
-
-=======
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Notes from '../components/Notes';
@@ -36,5 +24,4 @@ const NotesViewPage = () => {
 };
 
 
->>>>>>> cacb9ba (Pushing all changes to the main branch fully functional and completed)
 export default NotesViewPage;

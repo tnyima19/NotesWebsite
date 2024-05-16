@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-function SignUpPage(){
-    return<>
-  
-  </>
-}
-export default SignUpPage;
-=======
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from './firebase-config';
@@ -70,4 +62,3 @@ const Register = () => {
 };
 
 export default Register;
->>>>>>> cacb9ba (Pushing all changes to the main branch fully functional and completed)
