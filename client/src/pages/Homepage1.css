@@ -1,0 +1,281 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+}
+
+#header{
+    font-family: 'Tangerine', serif;
+    text-align: center;
+    margin-top: 0;
+    background-color: white;
+    padding:7px;
+    display: inline;
+    border-radius: 10px;
+    font-size: 35px;
+    text-shadow: 4px 4px 3px #aaa;
+    font-weight: bold;
+}
+
+/* Notes in each folder styling */
+#header2{ 
+    color:rgb(0, 0, 0);
+    background-color: white;
+    padding:5px 9px;
+    border-radius: 6px;
+    font-size: 20px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight:bold;
+    margin-top: 10px;
+    position: relative;
+    margin-left:28px;
+    
+}
+
+
+
+/* Create Folder Button Styling Below:  */
+.folder{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.create-folder{
+    border-radius: 12px;
+    background-color: #c2ebfc;
+    border: 2px solid rgb(97, 95, 95);
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 15px;
+    margin-left: 3px;
+}
+
+
+
+
+/* Styling to list of folders being created: */
+.navBar1 {
+    display: flex;
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    justify-content: center; /* Center items horizontally */
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Adjusted styling for each folder item */
+.navBar1 li {
+    margin-right: 35px; /* Add some spacing between list items */
+    margin-bottom: 10px; /* Add space between rows */
+}
+
+
+
+
+
+
+
+/* Create Folder Icon Styling Below line 206-208: */
+.folder-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    margin-top: 10px;
+    text-align: center; /* Center the text */
+}
+#folder-icon:hover{
+    filter: brightness(80%);
+}
+
+.folder-name {
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 15px;
+    font-weight:bold;
+    background-color: white;
+    padding:5px;
+    border-radius: 5px;
+    margin-top: -15px;
+}
+  
+
+
+
+
+/* Theme Button Styling Below: */
+
+.theme-options-dropdown {
+    position: absolute;
+    top: 87px; /* Adjust top position as needed */
+    right: 8px; /* Adjust right position as needed */
+    font-size: 15px;
+  }
+  
+  .theme-options-btn {
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    border-radius: 10px;
+    background-color: rgb(253, 179, 249);
+  }
+  
+  .theme-options-list {
+    /* Add styles for the dropdown list as needed */
+    background-color: white;
+    border-radius: 10px;
+    padding:15px;
+    margin-top: -1px;
+    border: 1px solid rgb(93, 92, 92);
+  }
+  
+  div[class="theme-option"]:hover{
+    padding:5px;
+    text-align: end;
+    cursor: pointer;
+  }
+  /* Apply background image to the body */
+  body {
+    background-image: url('../pages/white.png'); /* Default background image */
+    background-repeat: no-repeat; /* Prevent background image from repeating */
+    background-size: cover; /* Cover the entire background */
+}
+
+
+
+
+
+
+/* Logout Button Styling Below: */
+
+#logout-btn{
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    color:white;
+    border-radius: 10px;
+    background-color: #9c989b;
+    padding: 5px 9px; /* Adjust padding as needed */
+    font-size: 13px;
+    border: 2px solid rgb(112, 111, 111);
+    cursor: pointer;
+    z-index: 999; /* Ensure logout button is above other content */
+}
+
+
+
+
+
+/* Container for delete trash button and create a new note for specific folder button */
+.folderFix{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    margin-top: 60px;
+    text-align: center;
+    margin-right: 3px;
+}
+
+
+/* Delete Button Styling Below: */
+
+.delete-folder {
+    position: absolute;
+    top:5px;
+    left:7px;
+}
+
+.delete-folder-button {
+    cursor: pointer;
+}
+
+.delete-folder-button:hover{
+    filter: brightness(80%);
+}
+
+.delete-folder:hover::after {
+    /* content: "Delete Folder"; */
+    position: absolute;
+    top: -30px; /* Adjust the distance from the folder icon */
+    right: -5px; /* Adjust the alignment */
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 10px; /* Adjust the font size */
+    transition: opacity 0.3s ease; /* Adjust the transition speed */
+  }
+  
+
+
+
+  /* Create New Note in Folder Styling */
+  #create-note-folder{
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 15px;
+    color:rgb(20, 20, 20);
+    border-radius: 10px;
+    background-color: #8ddf64;
+    margin-top: 8px;
+    
+  }
+
+  #create-note-folder:hover{
+    filter: brightness(80%);
+}
+
+
+
+
+
+
+
+/* General Create Note button styling */
+.general-note{
+    position: absolute;
+    top: 50px;
+    right: 10px;
+}
+
+#general-note-btn{
+    border-radius: 12px;
+    border: 2px solid rgb(97, 95, 95);
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 14px;
+    margin-left: 3px;
+    background-color: #8ddf64;
+}
+
+
+
+
+
+/* when you click a folder and it shows you the content of it */
+.sub-note-list{
+    list-style-type: none;
+}
+
+#delete-btn{
+    border-radius: 12px;
+    border: 2px solid rgb(97, 95, 95);
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 14px;
+    margin-left: 3px;
+    background-color: #c6c6c6;
+}
+
+#open-btn{
+    border-radius: 12px;
+    border: 2px solid rgb(97, 95, 97);
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 14px;
+    margin-left: 3px;
+    background-color: #d7a3f7;
+    margin-top: 4px;
+}
