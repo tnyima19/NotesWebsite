@@ -16,10 +16,6 @@ Install the dependencies:
 
 npm install
 
-Install Firebase Admin and Axios:
-
-npm install firebase-admin axios
-
 Run the Node.js server:
 
     node app.js
@@ -181,4 +177,3 @@ For each operating system:
     Start the React frontend.
 
 Ensure each backend and frontend is running in its respective terminal window. This setup ensures all parts of your application are running concurrently.
->>>>>>> cacb9ba (Pushing all changes to the main branch fully functional and completed)
