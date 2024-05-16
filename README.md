@@ -1,12 +1,9 @@
-<<<<<<< HEAD
-For now, refer to Version3Homepage
-=======
 
 Running the Project on macOS, Linux, and Windows
 Prerequisites
 
     Node.js installed
-    Python installed
+    Python 3.12 installed
 
 macOS
 1. Node.js Backend (app.js)
