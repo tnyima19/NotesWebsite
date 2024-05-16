@@ -26,13 +26,9 @@ Run the Node.js server:
 
 cd path/to/api
 
-Create a virtual environment:
-
-python3 -m venv venv
-
 Activate the virtual environment:
 
-source venv/bin/activate
+source venv/scripts/activate
 
 Install the dependencies:
 
@@ -67,10 +63,6 @@ Install the dependencies:
 
 npm install
 
-Install Firebase Admin and Axios:
-
-npm install firebase-admin axios
-
 Run the Node.js server:
 
     node app.js
@@ -82,13 +74,9 @@ Run the Node.js server:
 
 cd path/to/api
 
-Create a virtual environment:
-
-python3 -m venv venv
-
 Activate the virtual environment:
 
-source venv/bin/activate
+source venv/scripts/activate
 
 Install the dependencies:
 
@@ -123,10 +111,6 @@ cd path\to\api
 Install the dependencies:
 
 npm install
-
-Install Firebase Admin and Axios:
-
-npm install firebase-admin axios
 
 Run the Node.js server:
 
