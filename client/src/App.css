@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-/* Add custom CSS here */
-=======
+
 /* Global styles for the body and html elements */
 body, html {
   font-family: 'Montserrat', sans-serif; /* Font style for the website */
@@ -123,4 +121,3 @@ form h2 {
 .links a:hover {
   color: #c5627f; /* Darker color on hover */
 }
->>>>>>> cacb9ba (Pushing all changes to the main branch fully functional and completed)
