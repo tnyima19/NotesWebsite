@@ -7,7 +7,7 @@ import './Notes.css';
 const Notes = ({ folderId, noteId }) => {
     const editorRef = useRef(null);
     const [content, setContent] = useState('');
-    const [generatedImages, setGeneratedImages]=useState([]);
+    const [imageURL, setGeneratedImages]=useState('');
     const [title, setTitle] = useState('');
     const [searchPrompt, setSearchPrompt] = useState('');
     const navigate = useNavigate();
@@ -92,27 +92,29 @@ const Notes = ({ folderId, noteId }) => {
         setTitle(e.target.value);
     }
 
-    const fetchGeneratedImages = async () => {
-      try {
-          const response = await axios.get(`http://localhost:3000/get-images`);
-          setGeneratedImages(response.data.images || []);
-      } catch (error) {
-          console.error('Error fetching generated images:', error.response?.data?.message || 'Error occurred');
-      }
-  };
+  //   const fetchGeneratedImages = async () => {
+  //     try {
+  //         const response = await axios.get(`http://localhost:4001/get-images`);
+  //         setGeneratedImages(response.data[0]. || []);
+  //     } catch (error) {
+  //         console.error('Error fetching generated images:', error.response?.data?.message || 'Error occurred');
+  //     }
+  // };
 
-  useEffect(()=>{
-    fetchGeneratedImages();
-  },[]);
+  // useEffect(()=>{
+  //   fetchGeneratedImages();
+  // },[]);
 
 
   const handleGenerateImage = async (event) => {
     event.preventDefault();
 
     try {
-        const response = await axios.post(`http://localhost:4001/generate-image`, { prompt: searchPrompt });
-        const newImageUrl = response.data.imageUrl;
-        setGeneratedImages((prev) => [newImageUrl, ...prev]);
+        const response = await axios.post(`http://localhost:4001/create-image`, { u_prompt: searchPrompt });
+        //const newImageUrl = response.data.imageUrl;
+        console.log('search: ',searchPrompt);
+        setGeneratedImages(response.data);
+        console.log('url: ',response);
         setSearchPrompt(''); // Reset the prompt input after submission
     } catch (error) {
         console.error('Error generating image:', error.response?.data?.message || 'Error occurred');
@@ -139,13 +141,14 @@ const Notes = ({ folderId, noteId }) => {
                     />
                     <button type="submit">Generate</button>
                 </form>
-                {generatedImages.length === 0 ? (
+                {/* {generatedImages.length === 0 ? (
                     <p>No images generated yet.</p>
                 ) : (
                     generatedImages.map((image, index) => (
                         <img key={index} src={image} alt={`Generated ${index}`} />
                     ))
-                )}
+                )} */}
+                {imageURL && <img src={imageURL} alt="prompt" />}
             </div>
         </div>
     );
