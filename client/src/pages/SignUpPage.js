@@ -21,7 +21,7 @@ const Register = () => {
 
     try {
       await createUserWithEmailAndPassword(auth, registerData.email, registerData.password);
-      navigate('/homepage'); // Navigate to homepage upon successful registration
+      navigate(`/users/${userId}/homepage`); // Navigate to user-specific homepage
       alert('User registered successfully');
     } catch (error) {
       alert(error.message);
