@@ -20,7 +20,8 @@ const Register = () => {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, registerData.email, registerData.password);
+      const userCredential = await createUserWithEmailAndPassword(auth, registerData.email, registerData.password);
+      const userId = userCredential.user.uid;
       navigate(`/users/${userId}/homepage`); // Navigate to user-specific homepage
       alert('User registered successfully');
     } catch (error) {
