@@ -231,10 +231,7 @@ function Homepage() {
             handleSubNoteSave={handleSubNoteSave}
           />
         )}
-        <div className="general-note">
-          <button id="general-note-btn" onClick={openNewNote}>Create New Note</button>
-        </div>
-        {state.currFolder && state.currFolder.notes && (
+                {state.currFolder && state.currFolder.notes && (
           <div>
             <h3 id="header2">Notes in {state.currFolder.folderName}:</h3>
             <ul className='sub-note-list'>
